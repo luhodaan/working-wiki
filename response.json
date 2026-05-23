@@ -1,0 +1,157 @@
+{
+  "pulses": [
+    {
+      "pulse_id": "2026-01-29",
+      "summary": "Ho iniziato il refactoring dell'ingestion dei documenti per rendere dinamico il riconoscimento della tipologia di modulo e passare il tipo rilevato fino all'estrazione structured output, evitando di hardcodare model e prompt. Ho verificato che il mapping tra tipologie nel JSON di configurazione e i basemodel del domain fosse gi\u00e0 disponibile e che bastasse riallineare i nomi per riusarlo nel flusso. Resta da consolidare l'uniformit\u00e0 tra identificativi rilevati nei preliminary checks e nomi dei modelli di dominio.",
+      "projects": [
+        {
+          "project_id": "document_ingestion",
+          "date": "2026-01-29",
+          "current_state": "In refactoring per rendere dinamico il routing tra tipo documento, prompt e basemodel; il mapping sembra gi\u00e0 disponibile nel config ma va integrato stabilmente nel processing."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "OpenAI API",
+          "date": "2026-01-29",
+          "new_skill": "Ho lavorato sul passaggio del tipo documento alla chiamata di structured output per evitare parametri hardcoded nel modello e nel prompt."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-01-30",
+      "summary": "Ho completato il refactoring di `document_ingestion.py` per rendere dinamico il riconoscimento del tipo modulo e il mapping verso basemodel e prompt, e la soluzione \u00e8 stata testata con successo. In parallelo ho aggiunto nuovi controlli per CCIAA e ATECO, inclusa la logica JSON per `qual_ccia_codice` che sostituisce la vecchia biforcazione tra usi industriali. \u00c8 emerso per\u00f2 un problema nel controllo di similarit\u00e0 `simile_a`, che fallisce in casi dove ci si aspetterebbe un match semantico minimo, quindi restano da analizzare altri falsi negativi.",
+      "projects": [
+        {
+          "project_id": "document_ingestion",
+          "date": "2026-01-30",
+          "current_state": "Il routing dinamico tra tipologia, basemodel e prompt funziona ed \u00e8 stato validato; restano da rifinire i dettagli sui controlli di estrazione e matching."
+        },
+        {
+          "project_id": "usi_commerciali",
+          "date": "2026-01-30",
+          "current_state": "Sono stati introdotti controlli specifici per CCIAA e ATECO, ma la qualit\u00e0 del matching su alcune descrizioni ATECO va ancora corretta."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "Databricks",
+          "date": "2026-01-30",
+          "new_skill": "Ho validato il refactoring e i controlli direttamente nell'ambiente di lavoro, verificando il comportamento del flusso sui documenti reali."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-01-31",
+      "summary": "Ho corretto un bug nel matching delle descrizioni ATECO: la ricerca di substring era implementata in modo errato e produceva score distorti. Ho sostituito la logica con un criterio basato su una soglia di lettere coincidenti in ordine, cos\u00ec da ottenere un partial match pi\u00f9 sensato quando le parole condividono sufficiente prefisso o struttura. Rimane aperto il tema della gestione del branch git e di eventuali cambi introdotti da altri rami.",
+      "projects": [
+        {
+          "project_id": "usi_commerciali",
+          "date": "2026-01-31",
+          "current_state": "Il controllo sulle descrizioni ATECO \u00e8 stato corretto, migliorando la robustezza del matching; restano da verificare altri casi limite."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "Git",
+          "date": "2026-01-31",
+          "new_skill": "Ho lavorato sul coordinamento dei branch e sulla gestione di fix in un flusso condiviso, con attenzione a integrazione e conflitti futuri."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-01-29",
+      "summary": "Ho sperimentato una soluzione basata su spaCy per fare lemmatizzazione e rendere pi\u00f9 pulita la ricerca dei match senza parametri aggiuntivi. L'approccio non \u00e8 per\u00f2 risultato praticabile su Databricks, perch\u00e9 il modello linguistico italiano non veniva scaricato correttamente e la pipeline era troppo pesante per questo caso d'uso. Per questo ho valutato un'alternativa pi\u00f9 leggera con simplelemma, misurando anche l'impatto sui tempi di esecuzione.",
+      "projects": [
+        {
+          "project_id": "usi_commerciali",
+          "date": "2026-01-29",
+          "current_state": "Sto cercando un metodo di matching lessicale pi\u00f9 affidabile e leggero per i controlli, dopo i limiti incontrati con spaCy."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "spaCy",
+          "date": "2026-01-29",
+          "new_skill": "Ho provato a usare spaCy per la lemmatizzazione, ma ho verificato limiti pratici di installazione e pesantezza della pipeline in Databricks."
+        },
+        {
+          "tech_id": "Databricks",
+          "date": "2026-01-29",
+          "new_skill": "Ho verificato che l'ambiente Databricks crea difficolt\u00e0 nello scaricare e usare risorse linguistiche esterne come i modelli italiani di spaCy."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-02-02",
+      "summary": "Ho chiarito che l'evaluation delle logiche di validazione non \u00e8 automatica ma manuale, quindi l'obiettivo \u00e8 misurare bene l'accuratezza dell'estrazione e non il validation engine in s\u00e9. Ho poi corretto la logica del controllo `coerenza_residenza_diversa_fornitura`, che risultava fallace e andava riscritta. Rimane da completare l'integrazione di dichiarazioni, usi promiscuo e firma, con diversi dubbi aperti sulla copertura dei casi reali e sulla natura dei controlli facoltativi.",
+      "projects": [
+        {
+          "project_id": "usi_commerciali",
+          "date": "2026-02-02",
+          "current_state": "La validazione sta avanzando, ma restano da integrare dichiarazioni, uso promiscuo e firma, con alcuni punti ancora non verificabili sui documenti disponibili."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "OpenAI API",
+          "date": "2026-02-02",
+          "new_skill": "Ho ragionato sulla distinzione tra accuratezza di estrazione e validazione, chiarendo come valutare manualmente i controlli rispetto all'output estratto."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-02-03",
+      "summary": "Ho verificato come lanciare e monitorare i job dell'area agevolazioni fiscali, oltre a collegare VS Code al workspace Databricks. Nel frattempo ho individuato diversi problemi di evaluation: normalizzazione dei filename con prefissi numerici, campi che perdono zeri iniziali perch\u00e9 tipizzati come generici invece che testo, e mismatch dovuti a ground truth non allineata tra casistiche diverse. Sto anche valutando se separare i file di ground truth per tipologia documentale per ridurre gli errori spur\u00ee.",
+      "projects": [
+        {
+          "project_id": "usi_commerciali",
+          "date": "2026-02-03",
+          "current_state": "L'evaluation \u00e8 ancora falsata da problemi di normalizzazione, tipizzazione dei campi e mismatch tra documenti attesi e documenti realmente processati."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "VS Code",
+          "date": "2026-02-03",
+          "new_skill": "Ho configurato il collegamento tra VS Code e il workspace Databricks per ispezionare e seguire meglio job e notebook."
+        },
+        {
+          "tech_id": "Databricks",
+          "date": "2026-02-03",
+          "new_skill": "Ho imparato dove osservare l'esecuzione dei job e come usarli per controllare i fallimenti nell'area agevolazioni fiscali."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-02-04",
+      "summary": "Ho sistemato la normalizzazione dei valori in ground truth per gestire meglio virgole e altri caratteri di punteggiatura, riducendo mismatch inutili in evaluation. Ho anche creato un notebook dedicato all'evaluation per usi commerciali, perch\u00e9 alcuni documenti industriali finivano per errore nel dataset commerciale e abbassavano artificialmente l'accuracy. Restano aperti i problemi sulle checkbox, su alcune date non normalizzate correttamente e su un documento commerciale che non viene n\u00e9 estratto n\u00e9 classificato correttamente.",
+      "projects": [
+        {
+          "project_id": "usi_commerciali",
+          "date": "2026-02-04",
+          "current_state": "L'evaluation \u00e8 stata resa pi\u00f9 affidabile con un notebook dedicato e una migliore normalizzazione, ma restano problemi su checkbox, date e documenti non riconosciuti."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "pandas",
+          "date": "2026-02-04",
+          "new_skill": "Ho lavorato sulla normalizzazione dei valori di ground truth per ridurre mismatch dovuti a differenze puramente formali nei dati confrontati."
+        }
+      ]
+    }
+  ],
+  "projects_list": [
+    "document_ingestion",
+    "usi_commerciali"
+  ],
+  "technologies_list": [
+    "OpenAI API",
+    "Databricks",
+    "Git",
+    "spaCy",
+    "VS Code",
+    "pandas"
+  ]
+}
