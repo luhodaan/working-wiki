@@ -1,143 +1,220 @@
 {
   "pulses": [
     {
-      "pulse_id": "2026-01-29",
-      "summary": "Ho iniziato il refactoring dell'ingestion dei documenti per rendere dinamico il riconoscimento della tipologia di modulo e passare il tipo rilevato fino all'estrazione structured output, evitando di hardcodare model e prompt. Ho verificato che il mapping tra tipologie nel JSON di configurazione e i basemodel del domain fosse gi\u00e0 disponibile e che bastasse riallineare i nomi per riusarlo nel flusso. Resta da consolidare l'uniformit\u00e0 tra identificativi rilevati nei preliminary checks e nomi dei modelli di dominio.",
+      "pulse_id": "2026-01-01",
+      "summary": "Ho reso dinamica l'ingestion dei documenti commerciali, eliminando l'hardcoding del prompt e del modello nello structured output. Il flusso ora identifica il tipo di modulo nei preliminary checks, lo mappa ai nomi corretti definiti nel config e lo passa alla fase di estrazione. Restava da verificare la coerenza tra i nomi rilevati e i domain model, ma l'impianto risultava gi\u00e0 impostato.",
       "projects": [
         {
           "project_id": "document_ingestion",
-          "date": "2026-01-29",
-          "current_state": "In refactoring per rendere dinamico il routing tra tipo documento, prompt e basemodel; il mapping sembra gi\u00e0 disponibile nel config ma va integrato stabilmente nel processing."
-        }
-      ],
-      "technologies": [
-        {
-          "tech_id": "OpenAI API",
-          "date": "2026-01-29",
-          "new_skill": "Ho lavorato sul passaggio del tipo documento alla chiamata di structured output per evitare parametri hardcoded nel modello e nel prompt."
-        }
-      ]
-    },
-    {
-      "pulse_id": "2026-01-30",
-      "summary": "Ho completato il refactoring di `document_ingestion.py` per rendere dinamico il riconoscimento del tipo modulo e il mapping verso basemodel e prompt, e la soluzione \u00e8 stata testata con successo. In parallelo ho aggiunto nuovi controlli per CCIAA e ATECO, inclusa la logica JSON per `qual_ccia_codice` che sostituisce la vecchia biforcazione tra usi industriali. \u00c8 emerso per\u00f2 un problema nel controllo di similarit\u00e0 `simile_a`, che fallisce in casi dove ci si aspetterebbe un match semantico minimo, quindi restano da analizzare altri falsi negativi.",
-      "projects": [
-        {
-          "project_id": "document_ingestion",
-          "date": "2026-01-30",
-          "current_state": "Il routing dinamico tra tipologia, basemodel e prompt funziona ed \u00e8 stato validato; restano da rifinire i dettagli sui controlli di estrazione e matching."
-        },
-        {
-          "project_id": "usi_commerciali",
-          "date": "2026-01-30",
-          "current_state": "Sono stati introdotti controlli specifici per CCIAA e ATECO, ma la qualit\u00e0 del matching su alcune descrizioni ATECO va ancora corretta."
-        }
-      ],
-      "technologies": [
-        {
-          "tech_id": "Databricks",
-          "date": "2026-01-30",
-          "new_skill": "Ho validato il refactoring e i controlli direttamente nell'ambiente di lavoro, verificando il comportamento del flusso sui documenti reali."
-        }
-      ]
-    },
-    {
-      "pulse_id": "2026-01-31",
-      "summary": "Ho corretto un bug nel matching delle descrizioni ATECO: la ricerca di substring era implementata in modo errato e produceva score distorti. Ho sostituito la logica con un criterio basato su una soglia di lettere coincidenti in ordine, cos\u00ec da ottenere un partial match pi\u00f9 sensato quando le parole condividono sufficiente prefisso o struttura. Rimane aperto il tema della gestione del branch git e di eventuali cambi introdotti da altri rami.",
-      "projects": [
-        {
-          "project_id": "usi_commerciali",
-          "date": "2026-01-31",
-          "current_state": "Il controllo sulle descrizioni ATECO \u00e8 stato corretto, migliorando la robustezza del matching; restano da verificare altri casi limite."
+          "date": "2026-01-01",
+          "current_state": "Il riconoscimento del tipo documento e il passaggio dinamico del modello/prompt sono stati refactorizzati e funzionano con il mapping dal config ai domain model."
         }
       ],
       "technologies": [
         {
           "tech_id": "Git",
-          "date": "2026-01-31",
-          "new_skill": "Ho lavorato sul coordinamento dei branch e sulla gestione di fix in un flusso condiviso, con attenzione a integrazione e conflitti futuri."
+          "date": "2026-01-01",
+          "new_skill": "Ho applicato un refactoring mirato su un flusso di ingestion gi\u00e0 esistente, facendo evolvere il routing dei modelli senza rompere la struttura dei preliminary checks."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-01-02",
+      "summary": "Ho completato il refactoring di document_ingestion per gestire in modo dinamico il tipo modulo e il relativo mapping verso basemodel e prompt, verificando che il comportamento fosse corretto. In parallelo ho aggiunto i controlli per ccia e ateco, sostituendo la vecchia biforcazione sugli usi industriali con un controllo JSON su qual_ccia_codice. \u00c8 emerso per\u00f2 un problema nella funzione simile_a, che falliva su casi di ATECO con descrizioni apparentemente coerenti, quindi \u00e8 rimasto aperto il tema della similarit\u00e0 testuale.",
+      "projects": [
+        {
+          "project_id": "document_ingestion",
+          "date": "2026-01-02",
+          "current_state": "Il mapping dinamico tra tipo documento, domain model e prompt \u00e8 stato testato con successo."
+        },
+        {
+          "project_id": "usi_commerciali",
+          "date": "2026-01-02",
+          "current_state": "I controlli su CCIAA e ATECO sono stati aggiunti e validati, ma resta da correggere la logica di similarit\u00e0 testuale per alcuni casi di descrizione."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "Git",
+          "date": "2026-01-02",
+          "new_skill": "Ho consolidato un refactoring su codice di ingestion gi\u00e0 in produzione, verificando il funzionamento end-to-end dopo la modifica del mapping."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-01-03",
+      "summary": "Ho corretto un bug nella logica di string_utils: il pattern matching per le descrizioni ATECO non cercava davvero substring coerenti ma verificava in modo errato l\u2019inclusione totale di una stringa nell\u2019altra. Ho sostituito questa logica con un criterio basato su un numero minimo di lettere coincidenti in ordine, cos\u00ec da ottenere un partial match pi\u00f9 affidabile e aumentare lo score di similarit\u00e0 nei casi attesi.",
+      "projects": [
+        {
+          "project_id": "usi_commerciali",
+          "date": "2026-01-03",
+          "current_state": "La logica di matching per i controlli ATECO \u00e8 stata sistemata, migliorando l\u2019affidabilit\u00e0 della validazione su descrizioni parzialmente coerenti."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "Git",
+          "date": "2026-01-03",
+          "new_skill": "Ho applicato un bug fix su una funzione di utilit\u00e0 stringhe, migliorando la logica di matching senza introdurre dipendenze esterne."
         }
       ]
     },
     {
       "pulse_id": "2026-01-29",
-      "summary": "Ho sperimentato una soluzione basata su spaCy per fare lemmatizzazione e rendere pi\u00f9 pulita la ricerca dei match senza parametri aggiuntivi. L'approccio non \u00e8 per\u00f2 risultato praticabile su Databricks, perch\u00e9 il modello linguistico italiano non veniva scaricato correttamente e la pipeline era troppo pesante per questo caso d'uso. Per questo ho valutato un'alternativa pi\u00f9 leggera con simplelemma, misurando anche l'impatto sui tempi di esecuzione.",
+      "summary": "Ho sperimentato una soluzione basata su spaCy per fare lemmatizzazione e rendere pi\u00f9 pulita la ricerca testuale senza parametri manuali. L\u2019approccio per\u00f2 si \u00e8 scontrato con problemi di installazione dell\u2019engine italiano su Databricks e con la complessit\u00e0 della pipeline NLP, quindi ho valutato simplelemma come alternativa pi\u00f9 leggera. Ho anche confrontato i tempi di esecuzione, osservando differenze molto marcate rispetto alla soluzione precedente.",
       "projects": [
         {
           "project_id": "usi_commerciali",
           "date": "2026-01-29",
-          "current_state": "Sto cercando un metodo di matching lessicale pi\u00f9 affidabile e leggero per i controlli, dopo i limiti incontrati con spaCy."
+          "current_state": "La strategia di matching testuale \u00e8 in fase di esplorazione: spaCy \u00e8 stata scartata per vincoli di ambiente, mentre simplelemma appare pi\u00f9 adatta per performance e semplicit\u00e0."
         }
       ],
       "technologies": [
         {
           "tech_id": "spaCy",
           "date": "2026-01-29",
-          "new_skill": "Ho provato a usare spaCy per la lemmatizzazione, ma ho verificato limiti pratici di installazione e pesantezza della pipeline in Databricks."
+          "new_skill": "Ho provato a usare spaCy per la lemmatizzazione, ma ho capito i limiti pratici dell\u2019installazione e dell\u2019uso su Databricks in questo contesto."
         },
         {
           "tech_id": "Databricks",
           "date": "2026-01-29",
-          "new_skill": "Ho verificato che l'ambiente Databricks crea difficolt\u00e0 nello scaricare e usare risorse linguistiche esterne come i modelli italiani di spaCy."
+          "new_skill": "Ho verificato un problema di compatibilit\u00e0 ambiente su Databricks durante il deploy di dipendenze NLP, imparando a distinguere tra pacchetto pip e disponibilit\u00e0 reale del runtime."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-01-30",
+      "summary": "Ho corretto un bug nel riconoscimento delle province, che funzionava solo quando la sigla era presente e non sul nome esteso. Ho anche individuato un altro controllo fallace legato alla coerenza tra residenza e fornitura, segnando come prossimi passi l\u2019ultimo step di integrazione per usi commerciali e l\u2019aggiornamento dell\u2019excel dei controlli sviluppati. Restano aperti vari dubbi di integrazione, inclusa la gestione di indirizzi, ATECO mancanti e OCR su sezioni non estratte.",
+      "projects": [
+        {
+          "project_id": "usi_commerciali",
+          "date": "2026-01-30",
+          "current_state": "Il supporto ai controlli commerciali \u00e8 quasi completo, ma restano bug di riconoscimento province, normalizzazione indirizzi e chiarimenti su campi mancanti o non estratti."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "Git",
+          "date": "2026-01-30",
+          "new_skill": "Ho continuato a fare bug fixing incrementale su regole di validazione gi\u00e0 integrate, concentrandomi su casi limite di normalizzazione e matching."
         }
       ]
     },
     {
       "pulse_id": "2026-02-02",
-      "summary": "Ho chiarito che l'evaluation delle logiche di validazione non \u00e8 automatica ma manuale, quindi l'obiettivo \u00e8 misurare bene l'accuratezza dell'estrazione e non il validation engine in s\u00e9. Ho poi corretto la logica del controllo `coerenza_residenza_diversa_fornitura`, che risultava fallace e andava riscritta. Rimane da completare l'integrazione di dichiarazioni, usi promiscuo e firma, con diversi dubbi aperti sulla copertura dei casi reali e sulla natura dei controlli facoltativi.",
+      "summary": "Ho chiarito che l\u2019evaluation delle logiche di validazione non esiste come test automatico e va fatta manualmente, distinguendola dall\u2019evaluation dell\u2019estrazione. Ho poi sistemato il controllo coerenza_residenza_diversa_fornitura e iniziato a ragionare sull\u2019integrazione di dichiarazioni, uso promiscuo e firma. Sono emersi dubbi sui campi facoltativi, sui nuovi campi delle dichiarazioni e sulla differenza tra firma digitale e campi firma non vuoti negli usi commerciali, oltre al fatto che alcuni campi firma non risultano estratti.",
       "projects": [
         {
           "project_id": "usi_commerciali",
           "date": "2026-02-02",
-          "current_state": "La validazione sta avanzando, ma restano da integrare dichiarazioni, uso promiscuo e firma, con alcuni punti ancora non verificabili sui documenti disponibili."
+          "current_state": "La validazione commerciale sta entrando nella fase finale, ma restano da integrare dichiarazioni, uso promiscuo e firma con alcune incertezze sui criteri di confronto."
         }
       ],
       "technologies": [
         {
-          "tech_id": "OpenAI API",
+          "tech_id": "Git",
           "date": "2026-02-02",
-          "new_skill": "Ho ragionato sulla distinzione tra accuratezza di estrazione e validazione, chiarendo come valutare manualmente i controlli rispetto all'output estratto."
+          "new_skill": "Ho allineato la logica di validazione con il fatto che l\u2019evaluation sia manuale, distinguendo meglio tra estrazione e controllo funzionale."
         }
       ]
     },
     {
       "pulse_id": "2026-02-03",
-      "summary": "Ho verificato come lanciare e monitorare i job dell'area agevolazioni fiscali, oltre a collegare VS Code al workspace Databricks. Nel frattempo ho individuato diversi problemi di evaluation: normalizzazione dei filename con prefissi numerici, campi che perdono zeri iniziali perch\u00e9 tipizzati come generici invece che testo, e mismatch dovuti a ground truth non allineata tra casistiche diverse. Sto anche valutando se separare i file di ground truth per tipologia documentale per ridurre gli errori spur\u00ee.",
+      "summary": "Ho verificato come lanciare i job e dove recuperarli per i controlli sulle agevolazioni fiscali, oltre ad aver collegato VS Code al workspace Databricks. Durante la giornata sono emersi diversi problemi di evaluation e normalizzazione: rimozione errata di prefissi numerici nei filename, campi che tornano a essere trattati come generali invece che testo, mismatch dovuti a ground truth non allineate e problemi di stripping di virgole e normalizzazione di luoghi e date. \u00c8 emersa anche l\u2019ipotesi di separare i file di ground truth per tipologia documentale per ridurre i falsi mismatch.",
       "projects": [
         {
           "project_id": "usi_commerciali",
           "date": "2026-02-03",
-          "current_state": "L'evaluation \u00e8 ancora falsata da problemi di normalizzazione, tipizzazione dei campi e mismatch tra documenti attesi e documenti realmente processati."
+          "current_state": "La pipeline di evaluation mostra diversi falsi mismatch dovuti a normalizzazione e ground truth non perfettamente allineate; serve una revisione pi\u00f9 robusta dei dataset di riferimento."
         }
       ],
       "technologies": [
         {
           "tech_id": "VS Code",
           "date": "2026-02-03",
-          "new_skill": "Ho configurato il collegamento tra VS Code e il workspace Databricks per ispezionare e seguire meglio job e notebook."
+          "new_skill": "Ho configurato il collegamento tra VS Code e Databricks workspace per lavorare pi\u00f9 comodamente sui job e sui notebook remoti."
         },
         {
           "tech_id": "Databricks",
           "date": "2026-02-03",
-          "new_skill": "Ho imparato dove osservare l'esecuzione dei job e come usarli per controllare i fallimenti nell'area agevolazioni fiscali."
+          "new_skill": "Ho imparato a individuare e lanciare i job associati ai flussi di agevolazioni fiscali direttamente dall\u2019ambiente Databricks."
         }
       ]
     },
     {
       "pulse_id": "2026-02-04",
-      "summary": "Ho sistemato la normalizzazione dei valori in ground truth per gestire meglio virgole e altri caratteri di punteggiatura, riducendo mismatch inutili in evaluation. Ho anche creato un notebook dedicato all'evaluation per usi commerciali, perch\u00e9 alcuni documenti industriali finivano per errore nel dataset commerciale e abbassavano artificialmente l'accuracy. Restano aperti i problemi sulle checkbox, su alcune date non normalizzate correttamente e su un documento commerciale che non viene n\u00e9 estratto n\u00e9 classificato correttamente.",
+      "summary": "Ho sistemato la normalizzazione dei valori nella ground truth per gestire correttamente anche casi con virgole e altri caratteri di formattazione. Ho inoltre creato un notebook dedicato all\u2019evaluation degli usi commerciali, perch\u00e9 alcuni documenti industriali finivano erroneamente nella valutazione commerciale abbassando l\u2019accuracy. Rimangono aperti i problemi sui checkbox, sui campi non estratti e su un documento specifico che non genera output di debug.",
       "projects": [
         {
           "project_id": "usi_commerciali",
           "date": "2026-02-04",
-          "current_state": "L'evaluation \u00e8 stata resa pi\u00f9 affidabile con un notebook dedicato e una migliore normalizzazione, ma restano problemi su checkbox, date e documenti non riconosciuti."
+          "current_state": "L\u2019evaluation commerciale \u00e8 stata separata con un notebook dedicato e la normalizzazione della ground truth \u00e8 stata migliorata, ma persistono problemi su checkbox e su alcuni documenti non riconosciuti."
         }
       ],
       "technologies": [
         {
-          "tech_id": "pandas",
+          "tech_id": "Databricks",
           "date": "2026-02-04",
-          "new_skill": "Ho lavorato sulla normalizzazione dei valori di ground truth per ridurre mismatch dovuti a differenze puramente formali nei dati confrontati."
+          "new_skill": "Ho creato un notebook specifico per l\u2019evaluation in Databricks, adattando il flusso di test a una categoria documentale pi\u00f9 omogenea."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-02-05",
+      "summary": "Ho continuato a lavorare sui problemi di evaluation degli usi commerciali, in particolare sui documenti non riconosciuti e sul riconoscimento delle checkbox, che restano il punto pi\u00f9 debole dell\u2019estrazione. Ho anche affrontato varie normalizzazioni sugli indirizzi e sulle date, oltre a correggere alcune imprecisioni nella ground truth. In aggiunta ho introdotto il controllo LOOKUP_DY365 anche per usi commerciali, trattato REGISTRO_CCIAA come semplice non vuoto e verificato che alcuni controlli vanno resi facoltativi o rimossi.",
+      "projects": [
+        {
+          "project_id": "usi_commerciali",
+          "date": "2026-02-05",
+          "current_state": "La copertura dei controlli commerciali si \u00e8 ampliata, ma restano criticit\u00e0 su documenti complessi, checkbox e normalizzazione dei valori estratti."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "Git",
+          "date": "2026-02-05",
+          "new_skill": "Ho integrato nuovi controlli e rimosso quelli non pi\u00f9 pertinenti, mantenendo allineata la configurazione dei validation check con il comportamento reale dell\u2019estrazione."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-02-06",
+      "summary": "Ho ripulito il file di controlli condivisi per gli usi commerciali, eliminando regole non pi\u00f9 pertinenti e semplificando altri controlli come quelli su registro CCIAA. Ho anche reso facoltativi alcuni campi e rimosso il controllo sulla firma intermedia, oltre ad aver esteso i controlli LOOKUP_DY365 agli usi commerciali. Infine ho pushato le modifiche su dev, lasciando il merge su main per un confronto successivo con Alex e Dario.",
+      "projects": [
+        {
+          "project_id": "usi_commerciali",
+          "date": "2026-02-06",
+          "current_state": "I controlli commerciali sono stati riallineati e pushati su dev; resta da validare il merge su main e chiarire alcuni aspetti di logging."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "Git",
+          "date": "2026-02-06",
+          "new_skill": "Ho gestito una serie di modifiche coordinate su branch dev e preparato il terreno per un merge controllato su main."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-02-09",
+      "summary": "Ho iniziato a preparare il merge su main dell\u2019estensione agli usi commerciali e ho chiarito perch\u00e9 alcuni file non venivano visti nei test: la pipeline processa solo cartelle di secondo livello con una struttura molto rigida. Ho anche verificato qual \u00e8 l\u2019input path usato dal job principale e individuato un crash nella pagina di sintesi Excel che va ancora corretto. Durante la riunione sono emersi nuovi criteri di validazione, come quelli su coni e su alcune checkbox obbligatorie.",
+      "projects": [
+        {
+          "project_id": "usi_commerciali",
+          "date": "2026-02-09",
+          "current_state": "L\u2019estensione commerciale \u00e8 pronta per il merge, ma prima serve sistemare la generazione della sintesi Excel e validare meglio la struttura input dei test."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "Databricks",
+          "date": "2026-02-09",
+          "new_skill": "Ho chiarito come viene eseguito il job principale e come la struttura delle cartelle influenza l\u2019individuazione dei documenti nei test."
+        },
+        {
+          "tech_id": "Git",
+          "date": "2026-02-09",
+          "new_skill": "Ho preparato il flusso per un futuro merge su main, verificando prima il comportamento del codice su input reali."
         }
       ]
     }
@@ -147,11 +224,9 @@
     "usi_commerciali"
   ],
   "technologies_list": [
-    "OpenAI API",
-    "Databricks",
     "Git",
     "spaCy",
-    "VS Code",
-    "pandas"
+    "Databricks",
+    "VS Code"
   ]
 }
