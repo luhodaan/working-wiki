@@ -4,6 +4,14 @@ Project Timeline:
     - write proper utility functions to render the markdown a simple bullet list of technologies and projects
     (one page for each)
     - see results on obsidian
+DONE
+
 - project section should be hintable by the user, meaning that if project names are suggested the llm should try to use those ons and find the 
   relevant information about those names.
 - implement a system to recover from the last chunk, avoiding throwing tokens to the sink
+
+# 26/05/2026
+- in maniera deterministica per ogni tecnologia mi estraggo dai pulses (da capire se farlo a posteriori o in fase di elaborazione)
+le skills acquisite e scrivo per ogni tecnologia una pagina che abbia la collezione di queste skills.
+Questo ha l'obiettivo di rendere più facile il secondo passaggio dove llm analizzerà per ogni technologia i pulses rilevanti per tracciare 
+l'evoluzione delle skills e crearà un ulteriore pagina per ogni tecnlogia dove si da una direzione all'evoluzione delle skills.
