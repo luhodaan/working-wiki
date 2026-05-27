@@ -27,3 +27,5 @@ per mappare l'apprendimnto in maniera comprensibile per chi leggerà conseguente
 
 - loggare quali chunks vengono elaborati
 
+- gestione della sovrascrittura pagine se sono già presenti pagine ocn quel nome
+
