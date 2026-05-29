@@ -1,104 +1,70 @@
 {
   "pulses": [
     {
-      "pulse_id": "2026-02-06",
-      "summary": "Ho aggiornato la logica dei controlli per AGEVOLAZIONI/usi commerciali: alcuni controlli sul Registro CCIAA sono stati rimossi o semplificati (non devono pi\u00f9 essere un vero controllo in elenco, ma solo verificare che non siano vuoti). Inoltre ho riscritto i controlli collegati alle dichiarazioni_b_reg_cciaa in un semplice \u201cnon vuoto\u201d e ho rimosso la firma intermedia in quanto non risulta pi\u00f9 gestita come controllo. Ho pushato le modifiche su dev, mantenendo aperta la parte di merge su main come passaggio delicato da coordinare con Alex/Dario e da allineare anche con la gestione del logger.",
+      "pulse_id": "2026-04-14",
+      "summary": "Nel modulo \u201cAgevolazioni Fiscali\u201d \u00e8 stata progettata e implementata una gestione dei dati non puntuali tramite liste, includendo una regola di validazione per ogni elemento. \u00c8 stata inoltre ristrutturata l\u2019architettura del validation engine in 3 moduli per rendere pi\u00f9 semplice l\u2019aggiunta di nuove regole e gestire correttamente il multimodulo. Resta aperto il problema della logica di errore: se anche solo un codice POD fallisce, oggi va in errore l\u2019intero modulo (da rivedere).",
       "projects": [
         {
-          "project_id": "Usi commerciali document ingestion & validation",
-          "date": "2026-02-06",
-          "current_state": "Modifiche ai controlli (lookup dy365 su usi commerciali e rimozione/semplificazione Registro CCIAA) sono su dev; merge su main e verifica logger ancora da pianificare."
+          "project_id": "Commercial Document Ingestion & Validation",
+          "date": "2026-04-14",
+          "current_state": "Validation engine per Agevolazioni Fiscali refactorizzato in 3 moduli e aggiornato per liste/multimodulo; prossimi passi includono rivedere la propagazione degli errori quando fallisce un singolo POD."
+        }
+      ],
+      "technologies": [
+        {
+          "tech_id": "Git",
+          "date": "2026-04-14",
+          "new_skill": "Gestione workflow Git con merge frequenti su branch di dev e pull sul proprio branch per ridurre disallineamenti e conflitti."
+        }
+      ]
+    },
+    {
+      "pulse_id": "2026-04-15",
+      "summary": "Nel lavoro \u201cAgevolazioni Fiscali\u201d \u00e8 stato esteso ulteriormente il validation engine per supportare liste e multimodulo, confermando il refactor in pi\u00f9 moduli. \u00c8 stato aggiunto un preprocessing engine che espande il set di controlli in base al numero di elementi della lista, per superare il limite dell\u2019approccio 1-controllo\u21921-output che non permetteva di distinguere l\u2019esito per singolo elemento. Rimangono aperti dubbi su logica di estrazione/valore e su come gestire correttamente il fallimento parziale dei codici POD senza invalidare l\u2019intero modulo.",
+      "projects": [
+        {
+          "project_id": "Commercial Document Ingestion & Validation",
+          "date": "2026-04-15",
+          "current_state": "Agevolazioni Fiscali aggiornata con preprocessing che produce controlli per elemento; restano da rivedere error handling e chiarezza su significato del valore estratto."
         }
       ],
       "technologies": []
     },
     {
-      "pulse_id": "2026-02-09",
-      "summary": "Ho indagato la divergenza tra input test e struttura SharePoint: l\u2019engine processa solo cartelle di secondo livello, quindi con il secondo layout i PDF presenti in usi_commerciali vengono \u201csaltati\u201d se non rispettano la struttura attesa. Ho inoltre chiarito che l\u2019esecuzione del job di validazione consiste nell\u2019avvio del notebook di validazione, quindi il test pu\u00f2 essere fatto lanciando il notebook con pochi file di test da dev. Resta aperta la correzione del crush della pagina di sintesi Excel e il coordinamento sulla definizione completa delle future estensioni/flag (logger e merge su main inclusi).",
+      "pulse_id": "2026-04-16",
+      "summary": "Nel progetto \u201cAgevolazioni Fiscali\u201d \u00e8 proseguita la progettazione della soluzione per liste e multimodulo nel validation engine, includendo l\u2019espansione dei controlli tramite preprocessing in base al numero di elementi. In parallelo \u00e8 stata avviata l\u2019impostazione per la parte di estrazione dati tabellari: \u00e8 emersa la necessit\u00e0 di generare un nuovo sheet Excel dedicato alle tabelle e di instradare i risultati verso un flusso separato rispetto ai controlli. \u00c8 inoltre stata identificata una criticit\u00e0 nell\u2019interpretazione dei messaggi di errore (indici e loop sui valori) che rende difficile l\u2019uso per gli operatori.",
       "projects": [
         {
-          "project_id": "Usi commerciali document ingestion & validation",
-          "date": "2026-02-09",
-          "current_state": "In dev emerge che la directory structure fissa causa omissione della cartella usi_commerciali nei test; serve fix su generazione sintesi Excel e pianificazione merge/estensioni (usi senza fini di lucro)."
+          "project_id": "Commercial Document Ingestion & Validation",
+          "date": "2026-04-16",
+          "current_state": "Validation engine per liste/multimodulo consolidato con preprocessing; avviata anche l\u2019estrazione tabellare con nuovo sheet \u201ctabelle\u201d e revisione necessaria di messaggi/semantica degli errori."
         }
       ],
       "technologies": []
     },
     {
-      "pulse_id": "2026-02-10",
-      "summary": "Ho completato l\u2019estensione dei controlli e dei mapping necessari per usi senza fini di lucro, includendo prompt e mapping tra prompt e domain model. Ho inoltre iniziato ad affrontare i dubbi sul multithreading nell\u2019ingestion (effettiva velocizzazione vs possibili race condition) e su come collegare VS Code alla repo Azure, oltre a problemi di visibilit\u00e0 dei pull su Databricks. Restano aperti anche gap funzionali su una specifica pagina (Modalit\u00e0 di trasmissione / set di regole) e la necessit\u00e0 di capire cosa cambiare lato evaluation.",
+      "pulse_id": "2026-04-17",
+      "summary": "Nel lavoro \u201cAgevolazioni Fiscali\u201d \u00e8 stata portata avanti la parte di estrazione dati tabellari, includendo la creazione/modifica del modulo per la generazione di un nuovo sheet dedicato alle tabelle. \u00c8 stato inoltre definito il razionale per separare correttamente il flusso di scrittura: i dati tabellari non devono finire nello sheet dei \u201ccontrolli\u201d. Rimane da affrontare l\u2019usabilit\u00e0 dei messaggi di errore (es. indice 0) e la necessit\u00e0 di spacchettare ulteriormente la logica affinch\u00e9 i controlli agiscano sui singoli valori estratti invece che su loop dell\u2019intero allegato.",
       "projects": [
         {
-          "project_id": "Usi commerciali document ingestion & validation",
-          "date": "2026-02-10",
-          "current_state": "Estensione usi senza fini di lucro implementata in dev con controlli e mapping prompt/domain model; da chiarire multithreading, visibilit\u00e0 su Databricks e completare regole per pagina mancante e aspetti evaluation."
-        }
-      ],
-      "technologies": []
-    },
-    {
-      "pulse_id": "2026-02-11",
-      "summary": "Ho verificato l\u2019implementazione completa dei controlli per usi senza scopo di lucro correggendo alcuni punti specifici (es. sede e anno di iscrizione passati a facoltativi). Ho inoltre affrontato un problema di checkbox/flag non presi (es. impianti sportivi) modificando il prompt. Restano aperti il merge su dev di usi senza scopo di lucro e ulteriori miglioramenti sulla detection checkbox e sulla validazione codici fiscali (attualmente pi\u00f9 stringa alfanumerica che struttura valida).",
-      "projects": [
-        {
-          "project_id": "Usi commerciali document ingestion & validation",
-          "date": "2026-02-11",
-          "current_state": "Controlli usi senza scopo di lucro risultano completi e testati in dev (inclusi prompt/flag); manca merge su dev e si continua su refactor detection checkbox/validazione CF."
-        }
-      ],
-      "technologies": []
-    },
-    {
-      "pulse_id": "2026-02-12",
-      "summary": "Ho proseguito su usi senza scopo di lucro migliorando la detection delle checkbox tramite modifiche al prompt (caso critico: firmato digitalmente). Sul lato Datalens Bollette ho applicato un bug fix mirato: alcuni file finivano in uno status di errore anche se l\u2019OCR estraeva correttamente, causando FALSE sistematici nell\u2019evaluation. La causa individuata era un mismatch di tipo nell\u2019assegnazione a un dataframe (bool su colonna che conteneva stringhe), e la soluzione \u00e8 stata un cast a string e una rimozione temporanea del try/catch, con resto da verificare che la gestione errori sia consistente.",
-      "projects": [
-        {
-          "project_id": "Usi commerciali document ingestion & validation",
-          "date": "2026-02-12",
-          "current_state": "Usi senza scopo di lucro su dev migliorati lato prompt checkbox; in parallelo bug fix Datalens Bollette per evitare crash/skip controlli dovuti a tipo errato su results_df (resta da verificare ripristino gestione try/catch)."
-        }
-      ],
-      "technologies": []
-    },
-    {
-      "pulse_id": "2026-02-13",
-      "summary": "Ho continuato l\u2019analisi Datalens Bollette concentrandomi sul bug fix relativo al blocco try/catch per confermare che non riproduca l\u2019errore che portava a false negative in evaluation. Rimane aperta una task specifica: nei dataset non bollette, documenti con pod/pdr ma senza codice fiscale non vengono correttamente scartati, quindi serve ispezionare i controlli OCR e come gestiscono questo caso. Ho anche evidenziato un problema pratico di integrazione workspace/versioning (lavoro fatto direttamente su main senza branch dedicato) e diversi punti aperti su logging/visibilit\u00e0 output dei job e revisione delle strategie di logging.",
-      "projects": [
-        {
-          "project_id": "Usi commerciali document ingestion & validation",
-          "date": "2026-02-13",
-          "current_state": "Baseline performance stabilita e bug fix verificato; open issue su classificazione OCR non-bolletta quando manca CF e su come osservare/leggere correttamente log e output dei job."
-        }
-      ],
-      "technologies": []
-    },
-    {
-      "pulse_id": "2026-02-16",
-      "summary": "In questa giornata l\u2019attivit\u00e0 principale \u00e8 stata orientata a capire le componenti operative del sistema Datalens Bollette (sviluppo locale vs deploy) e alcuni aspetti tecnici come async/await e FastAPI, nonch\u00e9 a preparare il terreno per la miglior gestione e debugging locale. Sul fronte planning, restano punti aperti su logging e integrazione di modifiche senza creare incoerenze tra main/branch. Non risultano completamenti nuovi di rilievo oltre all\u2019impostazione delle questioni di contesto per i prossimi fix.",
-      "projects": [
-        {
-          "project_id": "Usi commerciali document ingestion & validation",
-          "date": "2026-02-16",
-          "current_state": "Questioni di sviluppo/debug e integrazione modifiche Datalens Bollette ancora da chiarire (credenziali LLM/vertex ai, assenza sviluppo locale); logging validation e engine da migliorare."
-        }
-      ],
-      "technologies": []
-    },
-    {
-      "pulse_id": "2026-02-17",
-      "summary": "Ho effettuato il deploy del bug fix su Datalens Bollette e poi seguito un workflow ordinato di branch/PR/merge per arrivare alla versione corretta. In seguito ho creato un nuovo branch sequenziale e gestito la promozione verso preprod (con vincoli di autorizzazione su qualit\u00e0/main) coordinandomi con Marco e Dario per la pubblicazione. Restano aperti problemi di performance/errore con nuove richieste (jpeg/limiti Postman) e problemi pratici legati all\u2019account Eni per l\u2019uso di git (richieste browser popup ad ogni fetch).",
-      "projects": [
-        {
-          "project_id": "Usi commerciali document ingestion & validation",
-          "date": "2026-02-17",
-          "current_state": "Datalens Bollette bug fix deployato e merge workflow completato; ora focus su limiti/timeout di chiamate e anomalie multi-file in Postman e su configurazione git per evitare prompt ripetuti."
+          "project_id": "Commercial Document Ingestion & Validation",
+          "date": "2026-04-17",
+          "current_state": "Sheet Excel \u201ctabelle\u201d integrato/avviato per Agevolazioni Fiscali e separazione flussi rispetto ai \u201ccontrolli\u201d; da migliorare messaggi di errore e granularit\u00e0 dei controlli sui singoli valori."
         }
       ],
       "technologies": []
     }
   ],
   "projects_list": [
-    "Usi commerciali document ingestion & validation"
+    "Commercial Document Ingestion & Validation"
   ],
-  "technologies_list": []
+  "technologies_list": [
+    "VS Code",
+    "spaCy",
+    "simplelemma",
+    "pandas",
+    "Git",
+    "Databricks",
+    "pytest"
+  ]
 }

@@ -29,3 +29,16 @@ per mappare l'apprendimnto in maniera comprensibile per chi leggerà conseguente
 
 - gestione della sovrascrittura pagine se sono già presenti pagine ocn quel nome
 
+# 28/05/2026
+
+- implement timer to avoid infinite looping in the invoke part
+- how to insert obsidian links to connect documents
+  - specifically i am thinking of linking the date of technologies and projects to the given pulses.
+
+- Difficulties: it is evident that the general first prompt should be further instructed on the kind of work daily
+notes it will recieve and it may need suggestions on the technologies and projects present in the notes
+since if it is not clear it will tend to assume projects that do not exist, or it will split as two projects something that it is 
+just one project
+
+- also the time format since it is not specified it is guessed at each run
+
