@@ -42,3 +42,11 @@ just one project
 
 - also the time format since it is not specified it is guessed at each run
 
+
+# 24/06/2026
+
+- expand the second step to cover also the projects roadmap apart from the technologies
+- to avoid calling again the first steps of the llm I need a way of caching either the pulses in a json (implemented that cell already), or parse it from the md files (more difficult)
+- build a schema with excalidraw so that each step is clearer
+- modularize the notebook so that it is usable as a python package  
+
